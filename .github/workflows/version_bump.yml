@@ -10,9 +10,18 @@ jobs:
       contents: write
 
     steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: 1413076
+          private-key: ${{ secrets.BILLNAPIER_TEST_APP_PRIVATE_KEY }}
+
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - run: awk -i inplace '{sum = $1 + 1}; END {print sum}'  VERSION > VERSION.update && mv VERSION.update VERSION
         name: bump version
